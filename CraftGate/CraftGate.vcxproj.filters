@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="wx">
+      <UniqueIdentifier>{954d4678-dc34-4774-b6c1-b6adf07af51c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wx\res">
+      <UniqueIdentifier>{abd4d706-e341-4f9d-890c-1068b92f60d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{f2f86685-44d7-49ae-8aaa-c71d777faa2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\OpenGL-ES-2.x">
+      <UniqueIdentifier>{574a7709-521b-4b2c-a3c6-2e1a1a5adf81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\OpenGL-ES-2.x\shaders">
+      <UniqueIdentifier>{89022d1a-a210-48d5-940a-72f373a5e571}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CGGraph.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGPalette.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGGraphViewer.cpp">
+      <Filter>wx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGGraph_PCH.cpp" />
+    <ClCompile Include="CGCommon.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGBin.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGFile.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGScopedStream.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGMemoryStream.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGAnime.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGListCtrl.cpp">
+      <Filter>wx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGEventList.cpp">
+      <Filter>wx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGSynthetic.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGDecoder.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGDisplayPane.cpp">
+      <Filter>wx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGManagerWindow.cpp">
+      <Filter>wx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGPropertyWindow.cpp">
+      <Filter>wx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGOpenGLDisplayPane.cpp">
+      <Filter>wx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGOpenGLTexture.cpp">
+      <Filter>core\OpenGL-ES-2.x</Filter>
+    </ClCompile>
+    <ClCompile Include="CGOpenGLGraphicEnvironment.cpp">
+      <Filter>core\OpenGL-ES-2.x</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CGGraph.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGPalette.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGCommon.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGColor.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGGraphViewer.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="CGGraph_PCH.h" />
+    <ClInclude Include="CommandIDs.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="CGMemoryStream.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGFile.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGBin.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="IStream.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGScopedStream.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGConfig.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGAnime.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGListCtrl.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="CGEventList.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="CGSynthetic.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGDecoder.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGDisplayPane.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="CGManagerWindow.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="CGPropertyWindow.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="EMotions.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGCommon2D.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="EReferenceIdTypes.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGOpenGLDisplayPane.h">
+      <Filter>wx</Filter>
+    </ClInclude>
+    <ClInclude Include="CGOpenGLTexture.h">
+      <Filter>core\OpenGL-ES-2.x</Filter>
+    </ClInclude>
+    <ClInclude Include="CGOpenGLGraphicEnvironment.h">
+      <Filter>core\OpenGL-ES-2.x</Filter>
+    </ClInclude>
+    <ClInclude Include="CGOpenGL2D.shader.h">
+      <Filter>core\OpenGL-ES-2.x\shaders</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="media\anime.xpm">
+      <Filter>wx\res</Filter>
+    </None>
+    <None Include="media\folder.xpm">
+      <Filter>wx\res</Filter>
+    </None>
+    <None Include="media\graph.xpm">
+      <Filter>wx\res</Filter>
+    </None>
+    <None Include="media\palette.xpm">
+      <Filter>wx\res</Filter>
+    </None>
+  </ItemGroup>
+</Project>

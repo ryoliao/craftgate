@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CraftGate", "CraftGate\CraftGate.vcxproj", "{8FE85B21-92E6-41CD-83FD-A250118142E5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BBF1714B-F1A3-42A4-ACFF-019A4AFB837C} = {BBF1714B-F1A3-42A4-ACFF-019A4AFB837C}
+		{2DECB88D-D960-4CD5-9B03-F714B7F39CFC} = {2DECB88D-D960-4CD5-9B03-F714B7F39CFC}
+		{26C3F8F0-20BE-4B87-885B-E3B0F0A64DA4} = {26C3F8F0-20BE-4B87-885B-E3B0F0A64DA4}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "giflib", "external\giflib\giflib.vcxproj", "{26C3F8F0-20BE-4B87-885B-E3B0F0A64DA4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glew", "external\glew\glew.vcxproj", "{2DECB88D-D960-4CD5-9B03-F714B7F39CFC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "external\zlib\zlib.vcxproj", "{BBF1714B-F1A3-42A4-ACFF-019A4AFB837C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8FE85B21-92E6-41CD-83FD-A250118142E5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8FE85B21-92E6-41CD-83FD-A250118142E5}.Debug|Win32.Build.0 = Debug|Win32
+		{8FE85B21-92E6-41CD-83FD-A250118142E5}.Release|Win32.ActiveCfg = Release|Win32
+		{8FE85B21-92E6-41CD-83FD-A250118142E5}.Release|Win32.Build.0 = Release|Win32
+		{26C3F8F0-20BE-4B87-885B-E3B0F0A64DA4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{26C3F8F0-20BE-4B87-885B-E3B0F0A64DA4}.Debug|Win32.Build.0 = Debug|Win32
+		{26C3F8F0-20BE-4B87-885B-E3B0F0A64DA4}.Release|Win32.ActiveCfg = Release|Win32
+		{26C3F8F0-20BE-4B87-885B-E3B0F0A64DA4}.Release|Win32.Build.0 = Release|Win32
+		{2DECB88D-D960-4CD5-9B03-F714B7F39CFC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2DECB88D-D960-4CD5-9B03-F714B7F39CFC}.Debug|Win32.Build.0 = Debug|Win32
+		{2DECB88D-D960-4CD5-9B03-F714B7F39CFC}.Release|Win32.ActiveCfg = Release|Win32
+		{2DECB88D-D960-4CD5-9B03-F714B7F39CFC}.Release|Win32.Build.0 = Release|Win32
+		{BBF1714B-F1A3-42A4-ACFF-019A4AFB837C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BBF1714B-F1A3-42A4-ACFF-019A4AFB837C}.Debug|Win32.Build.0 = Debug|Win32
+		{BBF1714B-F1A3-42A4-ACFF-019A4AFB837C}.Release|Win32.ActiveCfg = Release|Win32
+		{BBF1714B-F1A3-42A4-ACFF-019A4AFB837C}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

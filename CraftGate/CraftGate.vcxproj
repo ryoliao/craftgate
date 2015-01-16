@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8FE85B21-92E6-41CD-83FD-A250118142E5}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>CGMapViewer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)external\wx\include;$(SolutionDir)external\glew\include;$(SolutionDir)external\giflib;$(SolutionDir)external\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)external\wx\lib\vc_lib;$(SolutionDir)lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)external\wx\include;$(SolutionDir)external\glew\include;$(SolutionDir)external\giflib;$(SolutionDir)external\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)external\wx\lib\vc_lib;$(SolutionDir)lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>CGGraph_PCH.h</PrecompiledHeaderFile>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>zlib.lib;giflib.lib;glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <Culture>0x0404</Culture>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>CGGraph_PCH.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>zlib.lib;giflib.lib;glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="CGAnime.cpp" />
+    <ClCompile Include="CGCommon.cpp" />
+    <ClCompile Include="CGDecoder.cpp" />
+    <ClCompile Include="CGEventList.cpp" />
+    <ClCompile Include="CGFile.cpp" />
+    <ClCompile Include="CGGraph.cpp" />
+    <ClCompile Include="CGGraphViewer.cpp" />
+    <ClCompile Include="CGGraph_PCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CGGraph_PCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CGGraph_PCH.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="CGDisplayPane.cpp" />
+    <ClCompile Include="CGListCtrl.cpp" />
+    <ClCompile Include="CGManagerWindow.cpp" />
+    <ClCompile Include="CGMemoryStream.cpp" />
+    <ClCompile Include="CGOpenGLDisplayPane.cpp" />
+    <ClCompile Include="CGOpenGLGraphicEnvironment.cpp" />
+    <ClCompile Include="CGOpenGLTexture.cpp" />
+    <ClCompile Include="CGPalette.cpp" />
+    <ClCompile Include="CGBin.cpp" />
+    <ClCompile Include="CGPropertyWindow.cpp" />
+    <ClCompile Include="CGScopedStream.cpp" />
+    <ClCompile Include="CGSynthetic.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CGAnime.h" />
+    <ClInclude Include="CGBin.h" />
+    <ClInclude Include="CGColor.h" />
+    <ClInclude Include="CGCommon.h" />
+    <ClInclude Include="CGConfig.h" />
+    <ClInclude Include="CGDecoder.h" />
+    <ClInclude Include="CGOpenGLDisplayPane.h" />
+    <ClInclude Include="CGEventList.h" />
+    <ClInclude Include="CGFile.h" />
+    <ClInclude Include="CGDisplayPane.h" />
+    <ClInclude Include="CGListCtrl.h" />
+    <ClInclude Include="CGManagerWindow.h" />
+    <ClInclude Include="CGMemoryStream.h" />
+    <ClInclude Include="CGOpenGLGraphicEnvironment.h" />
+    <ClInclude Include="CGOpenGL2D.shader.h" />
+    <ClInclude Include="CGOpenGLTexture.h" />
+    <ClInclude Include="CGPropertyWindow.h" />
+    <ClInclude Include="CGCommon2D.h" />
+    <ClInclude Include="CGScopedStream.h" />
+    <ClInclude Include="CGSynthetic.h" />
+    <ClInclude Include="EMotions.h" />
+    <ClInclude Include="EReferenceIdTypes.h" />
+    <ClInclude Include="IStream.h" />
+    <ClInclude Include="CGGraph.h" />
+    <ClInclude Include="CGGraphViewer.h" />
+    <ClInclude Include="CGGraph_PCH.h" />
+    <ClInclude Include="CGPalette.h" />
+    <ClInclude Include="CommandIDs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="media\anime.xpm" />
+    <None Include="media\folder.xpm" />
+    <None Include="media\graph.xpm" />
+    <None Include="media\palette.xpm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
