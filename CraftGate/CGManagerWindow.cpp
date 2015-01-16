@@ -1,11 +1,6 @@
 
 #include "CGGraph_PCH.h"
 
-//#include "media/anime.xpm"
-//#include "media/graph.xpm"
-//#include "media/folder.xpm"
-//#include "media/palette.xpm"
-
 BEGIN_EVENT_TABLE(CGManagerWindow, wxPanel)
     EVT_TREE_SEL_CHANGED(wxCGID_MANAGER_TREE, CGManagerWindow::OnItemSelected)
 END_EVENT_TABLE()
@@ -66,13 +61,7 @@ private:
 
 CGManagerWindow::CGManagerWindow(wxWindow* parent/*=0*/, wxWindowID id/*=wxID_ANY*/)
     : wxPanel(parent, id)
-    //, treeImageList(16, 16, true, 3)
 {
-    //treeImageList.Add(wxIcon(folder_ico));
-    //treeImageList.Add(wxIcon(palet_ico));
-    //treeImageList.Add(wxIcon(graph_ico));
-    //treeImageList.Add(wxIcon(anime_ico));
-
     // main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -80,8 +69,6 @@ CGManagerWindow::CGManagerWindow(wxWindow* parent/*=0*/, wxWindowID id/*=wxID_AN
     {
         treeCtrl = new wxTreeCtrl(this, wxCGID_MANAGER_TREE, wxDefaultPosition, wxDefaultSize, wxTR_HAS_BUTTONS|wxTR_HIDE_ROOT);
         treeCtrl->AddRoot("");        
-        //treeCtrl->SetImageList(&treeImageList);
-
         mainSizer->Add(treeCtrl, 1, wxEXPAND, 10);
     }
 

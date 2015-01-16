@@ -149,12 +149,6 @@
     <ClInclude Include="CGPalette.h" />
     <ClInclude Include="CommandIDs.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="media\anime.xpm" />
-    <None Include="media\folder.xpm" />
-    <None Include="media\graph.xpm" />
-    <None Include="media\palette.xpm" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

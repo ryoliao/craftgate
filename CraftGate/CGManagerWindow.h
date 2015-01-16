@@ -17,7 +17,6 @@ private:
     
     cg::CGBinLibraryRef binLib;
     wxTreeCtrl* treeCtrl;
-    //wxImageList treeImageList;
 
     DECLARE_EVENT_TABLE()
 };

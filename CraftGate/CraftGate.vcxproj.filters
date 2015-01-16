@@ -4,9 +4,6 @@
     <Filter Include="wx">
       <UniqueIdentifier>{954d4678-dc34-4774-b6c1-b6adf07af51c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="wx\res">
-      <UniqueIdentifier>{abd4d706-e341-4f9d-890c-1068b92f60d3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="core">
       <UniqueIdentifier>{f2f86685-44d7-49ae-8aaa-c71d777faa2d}</UniqueIdentifier>
     </Filter>
@@ -160,19 +157,5 @@
     <ClInclude Include="CGOpenGL2D.shader.h">
       <Filter>core\OpenGL-ES-2.x\shaders</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="media\anime.xpm">
-      <Filter>wx\res</Filter>
-    </None>
-    <None Include="media\folder.xpm">
-      <Filter>wx\res</Filter>
-    </None>
-    <None Include="media\graph.xpm">
-      <Filter>wx\res</Filter>
-    </None>
-    <None Include="media\palette.xpm">
-      <Filter>wx\res</Filter>
-    </None>
   </ItemGroup>
 </Project>
