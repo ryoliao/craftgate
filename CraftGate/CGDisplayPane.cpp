@@ -1,6 +1,8 @@
 
 #include "CGGraph_PCH.h"
 
+#if _CG_USE_WX_BITMAP
+
 BEGIN_EVENT_TABLE(CGDisplayPanel, wxPanel)
     EVT_PAINT(CGDisplayPanel::OnPaint)
     EVT_TIMER(wxCGID_TIMER_ANIME, CGDisplayPanel::OnTimerUpdate)
@@ -73,3 +75,5 @@ void CGDisplayPanel::OnLeftDown(wxMouseEvent& event)
 
     Refresh(false);
 }
+
+#endif

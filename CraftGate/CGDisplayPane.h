@@ -2,6 +2,7 @@
 #ifndef _CG_WX_DISPLAY_PANEL_H_
 #define _CG_WX_DISPLAY_PANEL_H_
 
+#if _CG_USE_WX_BITMAP
 class CGDisplayPanel : public wxPanel
 {
 public:
@@ -26,5 +27,6 @@ private:
 
     DECLARE_EVENT_TABLE()
 };
+#endif
 
 #endif //_CG_WX_DISPLAY_PANEL_H_

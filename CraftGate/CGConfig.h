@@ -17,10 +17,10 @@
 #endif
 
 #ifndef _CG_USE_WX_BITMAP
-#define _CG_USE_WX_BITMAP 1
+#define _CG_USE_WX_BITMAP 0
 #endif
 
-#ifndef _CG_USE_OPENGL
+#ifndef _CG_USE_OPENGL && !_CG_USE_WX_BITMAP
 #define _CG_USE_OPENGL 1
 #endif
 
