@@ -2,8 +2,6 @@
 #ifndef _CG_OPENGL_TEXTURE_H_
 #define _CG_OPENGL_TEXTURE_H_
 
-#if _CG_USE_OPENGL
-
 namespace cg
 {
 
@@ -29,5 +27,4 @@ typedef CGSharedRef<CGOpenGLTexture> CGOpenGLTextureRef;
 
 }
 
-#endif
 #endif

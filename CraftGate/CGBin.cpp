@@ -4,33 +4,6 @@
 namespace cg
 {
 
-struct SSplitPath
-{
-    SSplitPath(wchar_t const * filename)
-    {
-        // TODO: non-portable
-        errno_t r = _wsplitpath_s(
-            filename,
-            drive, sizeof(drive),
-            dir,   sizeof(dir),
-            name,  sizeof(name),
-            ext,   sizeof(ext));
-
-        if (r)
-            name[0] = L'\0';
-    }
-
-    bool isOK() const
-    {
-        return (name[0] != L'\0');
-    }
-
-    wchar_t drive[32];
-    wchar_t ext[32];
-    wchar_t name[MAX_PATH];
-    wchar_t dir[MAX_PATH];
-};
-
 struct SBinCategoryName
 {
     SBinCategoryName(wchar_t const * _name)
@@ -118,7 +91,7 @@ void CGBin::reset(wchar_t const * hint_bin_file)
         if (!ff.isDirectory() &&
             parseBin(ff.getFilename(), &cat, &ver, hint_suffix))
         {
-            if (!wcsicmp(hint_suffix, suffix.c_str()) &&
+            if (!_wcsicmp(hint_suffix, suffix.c_str()) &&
                 ver > version[cat])
             {
                 filename[cat] = ff.getFilename();
@@ -249,7 +222,7 @@ void CGBinLibrary::doParseFolder(wchar_t const * folder)
                     doInsertBin(filename);
                 }
                 else
-                if (parseMAP(&sp, &id))
+                if (parseMAP(filename, &sp, &id))
                 {
                     doInsertMap(filename, id);
                 }
@@ -301,7 +274,7 @@ void CGBinLibrary::doInsertCgp(wchar_t const * filename, wchar_t const * name)
 
 void CGBinLibrary::doInsertMap( wchar_t const * filename, u32 id )
 {
-    // TODO: implementation
+    Maps[id] = CGMapInfo{ filename };
 }
 
 u32 CGBinLibrary::size() const
@@ -313,7 +286,7 @@ bool CGBinLibrary::hasSuffix(wchar_t const * name) const
 {
     for (u32 i=0; i<Bins.size(); ++i)
     {
-        if (!wcsicmp(name, Bins[i]->getSuffix()))
+        if (!_wcsicmp(name, Bins[i]->getSuffix()))
             return true;
     }
     return false;
@@ -322,6 +295,15 @@ bool CGBinLibrary::hasSuffix(wchar_t const * name) const
 CGBinRef CGBinLibrary::getBin(u32 i)
 {
     return Bins[i];
+}
+CGBinRef CGBinLibrary::getBinWithSuffix(wchar_t const * name) const
+{
+    for (auto var : Bins)
+    {
+        if (!_wcsicmp(name, var->getSuffix()))
+            return var;
+    }
+    return CGBinRef();
 }
 
 u32 CGBinLibrary::getPaletteCount() const
@@ -334,6 +316,24 @@ CGNamedPalette const & CGBinLibrary::getPalette(u32 i) const
     return Palettes[i];
 }
 
+CGMapRef CGBinLibrary::readMap(u32 mapId) const
+{
+    auto it = Maps.find(mapId);
+    if (it == Maps.end())
+        return CGMapRef();
+
+    CGMapRef map;
+    map.create();
+    map->reset(it->second.file.c_str());
+
+    return map;
+}
+
+std::map<u32, CGMapInfo> const & CGBinLibrary::getMaps() const
+{
+    return Maps;
+}
+
 wchar_t const * CGBinLibrary::getFolder() const
 {
     return Folder.c_str();
@@ -344,14 +344,14 @@ wchar_t const * CGBinLibrary::getFolder() const
 bool parseBin(SSplitPath const * sp, s32* category, s32* version, wchar_t* suffix, wchar_t* dir)
 {
     // check extension name
-    if (wcsicmp(sp->ext, L".bin"))
+    if (_wcsicmp(sp->ext, L".bin"))
         return false;
 
     // search category
     s32 cate = -1L;
     for (u32 i=0; i<ECGC_COUNT; ++i)
     {
-        if (!wcsnicmp(sp->name,
+        if (!_wcsnicmp(sp->name,
             CGBinCategoryNames[i].name,
             CGBinCategoryNames[i].szName))
         {
@@ -402,7 +402,7 @@ extern bool parseBin(wchar_t const * filename, s32* category/*=0*/, s32* version
 bool parseCGP(SSplitPath const * sp, wchar_t* name/*=0*/)
 {
     // check extension name
-    if (wcsicmp(sp->ext, L".cgp"))
+    if (_wcsicmp(sp->ext, L".cgp"))
         return false;
 
     if (name)
@@ -411,13 +411,17 @@ bool parseCGP(SSplitPath const * sp, wchar_t* name/*=0*/)
     return true;
 }
 
-bool parseMAP(SSplitPath const * sp, u32* id/*=0*/)
+bool parseMAP(wchar_t const * filename, SSplitPath const * sp, u32* id/*=0*/)
 {
+    // FIXME: for client map only
     // check extension name
-    if (wcsicmp(sp->ext, L".dat"))
+    if (_wcsicmp(sp->ext, L".dat"))
         return false;
 
     if (!isdigit(*sp->name))
+        return false;
+
+    if (!CGMap::isMap(filename))
         return false;
 
     if (id)

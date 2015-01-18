@@ -266,3 +266,9 @@ void CGAnimeListProvider::OnPropertyChanged(wxPGProperty* value)
         wxGetApp().DisplayAnime(selection, direction, motion, false);
     }
 }
+
+void CGAnimeListProvider::UpdateDirection(long dir)
+{
+    direction = dir;
+    wxGetApp().DisplayAnime(selection, direction, motion, false);
+}

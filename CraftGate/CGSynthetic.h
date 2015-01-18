@@ -2,30 +2,11 @@
 #ifndef _CG_SYNTHETIC_H_
 #define _CG_SYNTHETIC_H_
 
-#if _CG_USE_WX_BITMAP
-
-struct CGBitmapGraph
-{
-    CGBitmapGraph()
-    {}
-
-    CGBitmapGraph(wxBitmap bmp, wxPoint off)
-        : offset(off)
-        , bitmap(bmp)
-    {}
-
-    wxPoint offset;
-    wxBitmap bitmap;
-
-    void Draw(wxDC & dc, wxPoint pos);
-};
-
-#endif
-
 namespace cg
 {
 
-#if _CG_USE_OPENGL
+const s32 MapGridWidth = 32;
+const s32 MapGridHeight = 24;
 
 struct CGOpenGLGraph
 {
@@ -34,7 +15,26 @@ struct CGOpenGLGraph
     CGOpenGLTextureRef tex;
 };
 
-#endif
+struct CGOpenGLMap
+{
+    CGSizei size;
+    std::vector<CGMap::SData> mappedData;
+    std::vector<CGOpenGLGraph> graphLib;
+
+    static CGPointi GetIndex(s32 x, s32 y);
+    static CGPointi GetIndex(CGPointi pos);
+
+    CGPointi GetPosition(s32 x, s32 y) const;
+    CGOpenGLGraph GetGraph(s32 x, s32 y, u32 layer) const;
+    CGSizei Last() const;
+
+    CGPointi GetCenter() const;
+
+    template<typename Fn>
+    inline void EnumerateObjects(CGRecti rect, Fn & f);
+};
+
+typedef CGSharedRef<CGOpenGLMap> CGOpenGLMapRef;
 
 struct MotionIterator
 {
@@ -58,6 +58,12 @@ struct MotionIterator
     CGPaletteRef palette;
 };
 
+struct MapPoint
+{
+    u32 graphLibIndex;
+    u32 graphId;
+};
+
 class CGSynthetic
 {
 public:
@@ -73,30 +79,19 @@ public:
     
     void selectBin(u32 binId);
     void selectPalette(u32 palId);
+    CGOpenGLMapRef createMap(u32 mapId);
+
     MotionIterator findMotion(u32 animeId, u16 dir, u16 motion);
 
     void saveGIF(MotionIterator iter, c8 const * filename);
-
-    // support wxWidgets.
-#if _CG_USE_WX_BITMAP
-
-    CGBitmapGraph CreateBitmap(u32 graphId);
-    CGBitmapGraph CreateBitmap(MotionIterator iterator, u32 frame);
-    CGBitmapGraph CreateBitmap(CGGraphRef graph, bool flipX=false);
-
-#endif
-
-#if _CG_USE_OPENGL
 
     CGOpenGLGraph CreateOpenGL(u32 graphId);
     CGOpenGLGraph CreateOpenGL(MotionIterator iterator, u32 frame);
     CGOpenGLGraph CreateOpenGL(CGGraphRef graph, s32 direction=CG_LEFT|CG_TOP);
 
-#endif
-
 private:
 
-    void doParsePalettes();
+    void doParse();
     CGPaletteRef doGetPalette(CGMotion const * mo);
 
     u32 PaletteId;
@@ -105,6 +100,7 @@ private:
 
     // key = serial number, value = palette
     std::map<u32, CGPaletteRef> AnimePalettes;
+    std::map<u32, MapPoint> MapPoints;
 };
 
 typedef CGSharedRef<CGSynthetic> CGSyntheticRef;

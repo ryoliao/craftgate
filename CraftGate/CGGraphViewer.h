@@ -15,17 +15,8 @@ class CGEventList;
 class CGPropertyWindow;
 class CGManagerWindow;
 
-#ifdef _CG_USE_OPENGL
-
 typedef CGOpenGLDisplayPane CGDisplayPane;
 typedef cg::CGOpenGLGraph CGDisplayGraph;
-
-#else
-
-typedef CGDisplayPanel CGDisplayPane;
-typedef CGBitmapGraph CGDisplayGraph;
-
-#endif
 
 class CGGraphViewerApp : public wxApp
 {
@@ -35,6 +26,7 @@ public:
 
     void ActiveBin(long binId, long listType=-1L);
     void ActivePalette(long paletteId);
+    void ActiveMap(int mapId);
     void Open(wxString const & folder);
     void Export(wxString const & filename);
     bool CanExport();
@@ -47,6 +39,7 @@ public:
         DISPLAY_NONE=0,
         DISPLAY_ANIME,
         DISPLAY_GRAPH,
+        DISPLAY_MAP,
     };
 
     CGGraphViewer* MainFrame;
@@ -55,10 +48,8 @@ public:
     CGGraphListProvider* GraphProvider;
     CGAnimeListProvider* AnimeProvider;
 
-#if _CG_USE_OPENGL
     wxGLContext* GLContext;
     cg::CGOpenGLGraphicEnvironment* GLEnv;
-#endif
 
     struct
     {
@@ -98,8 +89,6 @@ public:
     CGListCtrl* DisplayList;
     CGPropertyWindow* Property;
     CGDisplayPane* Display;
-
-private:
     wxAuiManager Aui;
 
     DECLARE_EVENT_TABLE()

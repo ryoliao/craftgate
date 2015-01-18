@@ -2,8 +2,6 @@
 #ifndef _CG_OPENGL_GRAPHIC_ENVIRONMENT_H_
 #define _CG_OPENGL_GRAPHIC_ENVIRONMENT_H_
 
-#if _CG_USE_OPENGL
-
 namespace cg
 {
 
@@ -60,5 +58,4 @@ private:
 
 }
 
-#endif //_CG_USE_OPENGL
 #endif //_CG_OPENGL_GRAPHIC_ENVIRONMENT_H_

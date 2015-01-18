@@ -1,8 +1,5 @@
 
 #include "CGGraph_PCH.h"
-
-#if _CG_USE_OPENGL
-
 #include "CGOpenGL2D.shader.h"
 
 namespace cg
@@ -315,5 +312,3 @@ void CGOpenGLGraphicEnvironment::doBindTexture(CGOpenGLTexture const * tex)
 }
 
 }
-
-#endif

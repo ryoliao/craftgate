@@ -79,6 +79,8 @@ public:
     virtual void SerializeProperty(std::vector<wxPGProperty*> & out);
     virtual void OnPropertyChanged(wxPGProperty* value);
 
+    void UpdateDirection(long dir);
+
 private:
     cg::CGAnimeLibraryRef Animes;
     long selection;

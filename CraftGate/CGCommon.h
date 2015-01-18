@@ -272,6 +272,33 @@ private:
     WIN32_FIND_DATA data;
 };
 
+struct SSplitPath
+{
+    SSplitPath(wchar_t const * filename)
+    {
+        // TODO: non-portable
+        errno_t r = _wsplitpath_s(
+            filename,
+            drive, ARRAYSIZE(drive),
+            dir, ARRAYSIZE(dir),
+            name, ARRAYSIZE(name),
+            ext, ARRAYSIZE(ext));
+
+        if (r)
+            name[0] = L'\0';
+    }
+
+    bool isOK() const
+    {
+        return (name[0] != L'\0');
+    }
+
+    wchar_t drive[32];
+    wchar_t ext[32];
+    wchar_t name[MAX_PATH];
+    wchar_t dir[MAX_PATH];
+};
+
 #else
 #error file finder only support on windows platform for now.
 #endif

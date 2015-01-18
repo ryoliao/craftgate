@@ -26,7 +26,7 @@ struct SSplitPath;
 extern bool parseBin(wchar_t const * filename, s32* category = 0, s32* version = 0, wchar_t* suffix = 0, wchar_t* dir = 0);
 extern bool parseBin(SSplitPath const * sp, s32* category = 0, s32* version = 0, wchar_t* suffix = 0, wchar_t* dir = 0);
 extern bool parseCGP(SSplitPath const * sp, wchar_t* name = 0);
-extern bool parseMAP(SSplitPath const * sp, u32* id=0);
+extern bool parseMAP(wchar_t const * filename, SSplitPath const * sp, u32* id = 0);
 
 class CGGraphLibrary;
 class CGAnimeLibrary;
@@ -69,6 +69,11 @@ struct CGNamedPalette
     CGPaletteRef palette;
 };
 
+struct CGMapInfo
+{
+    std::wstring file;
+};
+
 class CGBinLibrary
 {
 public:
@@ -81,10 +86,15 @@ public:
     u32 size() const;
     bool hasSuffix(wchar_t const * name) const;
     CGBinRef getBin(u32 i);
+    CGBinRef getBinWithSuffix(wchar_t const * name) const;
+
     wchar_t const * getFolder() const;
 
     u32 getPaletteCount() const;
     CGNamedPalette const & getPalette(u32 i) const;
+
+    CGMapRef readMap(u32 mapId) const;
+    std::map<u32, CGMapInfo> const & getMaps() const;
 
 private:
 
@@ -101,6 +111,7 @@ private:
 
     std::vector<CGBinRef> Bins;
     std::vector<CGNamedPalette> Palettes;
+    std::map<u32, CGMapInfo> Maps;
     std::wstring Folder;
 };
 

@@ -11,6 +11,22 @@ public:
     virtual void Activate()=0;
 };
 
+class CGManagerMapItem : public CGManagerItem
+{
+public:
+    CGManagerMapItem(int id)
+        : bindId(id)
+    {}
+
+    virtual void Activate() override
+    {
+        wxGetApp().ActiveMap(bindId);
+    };
+
+private:
+    int bindId;
+};
+
 class CGManagerGraphItem : public CGManagerItem
 {
 public:
@@ -84,7 +100,7 @@ wxString CGManagerWindow::DoGetSuffix(cg::CGBinRef bin)
 {
     wxString Suffix(bin->getSuffix());
     if (Suffix.IsEmpty())
-        Suffix = "UNNAMED";
+        Suffix = "DEFAULT";
     else
         Suffix.Replace("_", "");
 
@@ -103,6 +119,7 @@ void CGManagerWindow::Reset(cg::CGBinLibraryRef blib)
     wxTreeItemId pId = treeCtrl->AppendItem(fId, "Palettes");
     wxTreeItemId gId = treeCtrl->AppendItem(fId, "Graphics");
     wxTreeItemId aId = treeCtrl->AppendItem(fId, "Animations");
+    wxTreeItemId mId = treeCtrl->AppendItem(fId, "Maps");
 
     binLib = blib;
 
@@ -138,6 +155,13 @@ void CGManagerWindow::Reset(cg::CGBinLibraryRef blib)
             }
         }
     }
+    for (auto it : binLib->getMaps())
+    {
+        treeCtrl->AppendItem(mId,
+            wxString::Format("%u", it.first),
+            -1, -1, new CGManagerMapItem((int)it.first));
+    }
+
     treeCtrl->Expand(fId);
     treeCtrl->Expand(gId);
     treeCtrl->Expand(aId);

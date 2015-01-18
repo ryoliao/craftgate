@@ -75,7 +75,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -106,9 +106,9 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CGGraph_PCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CGGraph_PCH.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="CGDisplayPane.cpp" />
     <ClCompile Include="CGListCtrl.cpp" />
     <ClCompile Include="CGManagerWindow.cpp" />
+    <ClCompile Include="CGMap.cpp" />
     <ClCompile Include="CGMemoryStream.cpp" />
     <ClCompile Include="CGOpenGLDisplayPane.cpp" />
     <ClCompile Include="CGOpenGLGraphicEnvironment.cpp" />
@@ -124,12 +124,13 @@
     <ClInclude Include="CGBin.h" />
     <ClInclude Include="CGColor.h" />
     <ClInclude Include="CGCommon.h" />
+    <ClInclude Include="CGCommon2D_Math.hpp" />
     <ClInclude Include="CGConfig.h" />
     <ClInclude Include="CGDecoder.h" />
+    <ClInclude Include="CGMap.h" />
     <ClInclude Include="CGOpenGLDisplayPane.h" />
     <ClInclude Include="CGEventList.h" />
     <ClInclude Include="CGFile.h" />
-    <ClInclude Include="CGDisplayPane.h" />
     <ClInclude Include="CGListCtrl.h" />
     <ClInclude Include="CGManagerWindow.h" />
     <ClInclude Include="CGMemoryStream.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="CGCommon2D.h" />
     <ClInclude Include="CGScopedStream.h" />
     <ClInclude Include="CGSynthetic.h" />
+    <ClInclude Include="CGSynthetic_CGOpenGLMap.hpp" />
     <ClInclude Include="EMotions.h" />
     <ClInclude Include="EReferenceIdTypes.h" />
     <ClInclude Include="IStream.h" />

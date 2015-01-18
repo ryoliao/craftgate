@@ -24,6 +24,7 @@
 #include <string>
 #include <math.h>
 #include <algorithm>
+#include <functional>
 
 // wxWidgets
 #ifdef _MSC_VER
@@ -61,11 +62,13 @@
 #include "CGPalette.h"
 #include "CGGraph.h"
 #include "CGAnime.h"
+#include "CGMap.h"
 #include "CGDecoder.h"
 #include "CGOpenGLTexture.h"
 #include "CGOpenGLGraphicEnvironment.h"
 #include "CGBin.h"
 #include "CGSynthetic.h"
+
 
 // ide
 #include "CommandIDs.h"
@@ -73,7 +76,6 @@
 #include "CGGraphViewer.h"
 #include "CGManagerWindow.h"
 #include "CGListCtrl.h"
-#include "CGDisplayPane.h"
 #include "CGOpenGLDisplayPane.h"
 #include "CGEventList.h"
 

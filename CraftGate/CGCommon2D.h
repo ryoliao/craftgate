@@ -38,12 +38,23 @@ struct CGPoint
         return CGPoint(T(X / v.X), T(Y / v.Y));
     }
 
+    T Volume() const
+    {
+        return X * Y;
+    }
+
     T X, Y;
 };
 
 typedef CGPoint<s32> CGPointi;
 typedef CGPoint<u32> CGSizei;
 typedef CGPoint<f32> CGPointf;
+
+template<typename T>
+inline T CGSaturate(T v, T l, T r)
+{
+    return std::max(std::min(v, r), l);
+}
 
 template<typename T>
 struct CGRect
@@ -82,6 +93,22 @@ struct CGRect
     T getHeight() const
     {
         return RightBottom.Y - LeftTop.Y;
+    }
+
+    CGPoint<T> getCenter() const
+    {
+        return CGPoint<T>(
+            LeftTop.X + getWidth() / 2,
+            LeftTop.Y + getHeight() / 2);
+    }
+
+    CGRect limit(CGRect r) const
+    {
+        return CGRect(
+            CGSaturate(LeftTop.X, r.LeftTop.X, r.RightBottom.X),
+            CGSaturate(RightBottom.X, r.LeftTop.X, r.RightBottom.X),
+            CGSaturate(LeftTop.Y, r.LeftTop.Y, r.RightBottom.Y),
+            CGSaturate(RightBottom.Y, r.LeftTop.Y, r.RightBottom.Y));
     }
 
     CGPoint<T> getSize() const

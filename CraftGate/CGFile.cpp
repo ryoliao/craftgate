@@ -28,7 +28,7 @@ void CGFile::open( wchar_t const * filename )
     pf = ::_wfopen(filename, L"rb");
     if (pf)
     {
-        int df = ::fileno(pf);
+        int df = ::_fileno(pf);
         struct stat st;
         if (!::fstat(df, &st))
             szFile = st.st_size;

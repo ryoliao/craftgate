@@ -1,8 +1,6 @@
 
 #include "CGGraph_PCH.h"
 
-#if _CG_USE_OPENGL
-
 namespace cg
 {
 
@@ -78,5 +76,3 @@ bool CGOpenGLTexture::isOK() const
 }
 
 }
-
-#endif //_CG_USE_OPENGL

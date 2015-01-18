@@ -2,21 +2,63 @@
 #include "CGGraph_PCH.h"
 #include <gif_lib.h>
 
-#if _CG_USE_WX_BITMAP
-
-void CGBitmapGraph::Draw(wxDC & dc, wxPoint pos)
-{
-    if (bitmap.IsOk())
-    {
-        pos += offset;
-        dc.DrawBitmap(bitmap, pos);
-    }
-}
-
-#endif
-
 namespace cg
 {
+
+const u16 InvalidMapId = 0xffff;
+
+CGPointi CGOpenGLMap::GetPosition(s32 x, s32 y) const
+{
+    return CGPointi((x + y) * MapGridWidth, (y - x) * MapGridHeight);
+}
+
+CGPointi CGOpenGLMap::GetIndex(s32 x, s32 y)
+{
+    x /= MapGridWidth;
+    y /= MapGridHeight;
+    return CGPointi((x - y) / 2, (x + y) / 2);
+}
+
+CGPointi CGOpenGLMap::GetIndex(CGPointi pos)
+{
+    return GetIndex(pos.X, pos.Y);
+}
+
+CGOpenGLGraph CGOpenGLMap::GetGraph(s32 x, s32 y, u32 layer) const
+{
+    if (x < 0 || x >= (s32)size.X ||
+        y < 0 || y >= (s32)size.Y)
+        return CGOpenGLGraph();
+
+    u16 i;
+    switch (layer)
+    {
+    case 0:
+        i = mappedData[x + y * size.X].L0;
+        break;
+    case 1:
+        i = mappedData[x + y * size.X].L1;
+        break;
+    default:
+        return CGOpenGLGraph();
+    }
+
+    if (i == InvalidMapId)
+        return CGOpenGLGraph();
+
+    return graphLib[i];
+}
+
+CGSizei CGOpenGLMap::Last() const
+{
+    return CGSizei(size.X - 1, size.Y - 1);
+}
+
+CGPointi CGOpenGLMap::GetCenter() const
+{
+    CGSizei last = Last();
+    return CGPointi(last.X * MapGridWidth, 0);
+}
 
 class CGPixelData
 {
@@ -26,31 +68,6 @@ public:
         , pitch(graph->desc.width)
         , palette(pal)
     {}
-
-#if _CG_USE_WX_BITMAP
-
-    inline void ConvertRowPixels(long row, wxAlphaPixelData::Iterator p)
-    {
-        u8* sp = ptr + (row*pitch);
-        for (u32 i=0; i<pitch; ++i)
-        {
-            p.Data() = palette->getARGB(*sp);
-            ++p; ++sp;
-        }
-    }
-
-    inline void InvertRowPixels(long row, wxAlphaPixelData::Iterator p)
-    {
-        u8* sp = ptr + ((row+1)*pitch);
-        for (u32 i=0; i<pitch; ++i)
-        {
-            --sp;
-            p.Data() = palette->getARGB(*sp);
-            ++p;
-        }
-    }
-
-#endif
 
     inline void ConvertRowPixels(long row, GifFileType* gif)
     {
@@ -101,6 +118,7 @@ void CGSynthetic::reset()
     Bin.reset();
     Lib.reset();
     AnimePalettes.clear();
+    MapPoints.clear();
 }
 
 void CGSynthetic::reset(CGBinLibraryRef lib)
@@ -109,7 +127,7 @@ void CGSynthetic::reset(CGBinLibraryRef lib)
 
     Lib = lib;
     selectPalette(0);
-    doParsePalettes();
+    doParse();
 }
 
 void CGSynthetic::selectBin(u32 binId)
@@ -153,7 +171,7 @@ CGPaletteRef CGSynthetic::doGetPalette(CGMotion const * mo)
     return pal;
 }
 
-void CGSynthetic::doParsePalettes()
+void CGSynthetic::doParse()
 {
     CGBinRef bin;
     CGAnimeLibraryRef alib;
@@ -166,6 +184,8 @@ void CGSynthetic::doParsePalettes()
 
     // reset anime palettes
     AnimePalettes.clear();
+    // reset map points
+    MapPoints.clear();
 
     // make animation map temporarily
     for (u32 iBin=0; iBin < Lib->size(); ++iBin)
@@ -183,121 +203,49 @@ void CGSynthetic::doParsePalettes()
         }
     }
 
-    // build animation palette map
-    for (u32 iBin=0; iBin < Lib->size(); ++iBin)
+    // build animation and map-points with graph refId
+    for (u32 iBin = 0; iBin < Lib->size(); ++iBin)
     {
         bin = Lib->getBin(iBin);
         glib = bin->getGraphLibrary();
         if (glib)
         {
-            for (u32 iGraph=0; iGraph < glib->size(); ++iGraph)
+            for (u32 iGraph = 0; iGraph < glib->size(); ++iGraph)
             {
                 gdesc = glib->getInfo(iGraph);
-                if (ECRID_INVALID != gdesc->refId &&
-                    ECRID_ANIMATION == refIdType(gdesc->refId))
+                if (ECRID_INVALID != gdesc->refId)
                 {
-                    auto it = moMap.find(gdesc->refId);
-                    if (it != moMap.end())
+                    switch (refIdType(gdesc->refId))
                     {
-                        mo = it->second;
-                        if (mo->desc.paletteId)
+                    case ECRID_ANIMATION:
+                    {
+                        auto it = moMap.find(gdesc->refId);
+                        if (it != moMap.end())
                         {
-                            graph = glib->readGraph(iGraph);
-                            if (graph && graph->palette)
-                                AnimePalettes[mo->desc.paletteId] = graph->palette;
+                            mo = it->second;
+                            if (mo->desc.paletteId)
+                            {
+                                graph = glib->readGraph(iGraph);
+                                if (graph && graph->palette)
+                                    AnimePalettes[mo->desc.paletteId] = graph->palette;
+                            }
                         }
                     }
+                    break;
+
+                    case ECRID_GRAPH:
+                    case ECRID_GRAPH_EX:
+                    case ECRID_GRAPH_SE:
+                    {
+                        MapPoints[gdesc->refId] = MapPoint{ iBin, iGraph };
+                    }
+                    break;
+                    };
                 }
             }
         }
     }
 }
-
-#if _CG_USE_WX_BITMAP
-
-CGBitmapGraph CGSynthetic::CreateBitmap(u32 graphId)
-{
-    CGGraphLibraryRef glib = Bin->getGraphLibrary();
-    if (glib)
-    {
-        return CreateBitmap(glib->readGraph(graphId));
-    }
-    return CGBitmapGraph();
-}
-
-CGBitmapGraph CGSynthetic::CreateBitmap(CGGraphRef graph, bool flipX)
-{
-    CGBitmapGraph wxGraph;
-    if (graph)
-    {
-        defGraphInfo desc = graph->desc;
-        CGPaletteRef pal;
-
-        if (graph->palette)
-            pal = graph->palette;
-        else
-        if (-1L != PaletteId)
-            pal = Lib->getPalette(PaletteId).palette;
-        
-        if (!pal)
-            return wxGraph;
-
-        wxGraph.bitmap.Create(desc.width, desc.height, 32);
-        wxGraph.bitmap.UseAlpha();
-
-        u8* ip = graph->buffer.data();
-        wxAlphaPixelData data(wxGraph.bitmap);
-        if (data)
-        {
-            CGColor clr;
-            wxAlphaPixelData::Iterator p(data), py;
-            CGPixelData sdata(graph, pal);
-            if (flipX)
-            {
-                for (long y=0; y<desc.height; ++y)
-                {
-                    py = p;
-                    py.OffsetY(data, y);
-                    sdata.InvertRowPixels(y, py);
-                }
-                wxGraph.offset = wxPoint(-(desc.width + desc.offX), desc.offY);
-            }
-            else
-            {
-                for (long y=0; y<desc.height; ++y)
-                {
-                    py = p;
-                    py.OffsetY(data, y);
-                    sdata.ConvertRowPixels(y, py);
-                }
-                wxGraph.offset = wxPoint(desc.offX, desc.offY);
-            }
-        }
-    }
-    return wxGraph;
-}
-
-CGBitmapGraph CGSynthetic::CreateBitmap(MotionIterator iterator, u32 frame)
-{
-    CGGraphLibraryRef glib = Bin->getGraphLibrary();
-    if (glib)
-    {
-        u32 graphId = iterator.data->frames[frame].graphId;
-
-        CGGraphRef graph = glib->readGraph(graphId);
-
-        if (graph && iterator.palette)
-            graph->palette = iterator.palette;
-
-        bool flipX = (0 != (iterator.data->desc.wrap & 0x1));
-        return CreateBitmap(graph, flipX);
-    }
-    return CGBitmapGraph();
-}
-
-#endif
-
-#if _CG_USE_OPENGL
 
 CGOpenGLGraph CGSynthetic::CreateOpenGL(u32 graphId)
 {
@@ -354,7 +302,66 @@ CGOpenGLGraph CGSynthetic::CreateOpenGL(CGGraphRef graph, s32 direction)
     return oglGraph;
 }
 
-#endif 
+CGOpenGLMapRef CGSynthetic::createMap(u32 id)
+{
+    CGMapRef map = Lib->readMap(id);
+
+    if (!map.isOK())
+        return CGOpenGLMapRef();
+    
+    CGOpenGLMapRef glMap;
+    std::map<u16, u16> mapping;
+    glMap.create();
+
+    // I'm lazy, so use c++11 as simple.
+    glMap->mappedData = std::move(map->getData());
+    glMap->size = map->getSize();
+    // mapping lambda
+    auto mappingSetter = [&](u16 & mapId)
+    {
+        // skip empty data
+        if (0 == mapId)
+        {
+            mapId = InvalidMapId;
+            return;
+        }
+
+        auto mapped = mapping.find(mapId);
+        if (mapped == mapping.end())
+        {
+            u32 searchId = mapId;
+
+            // Ex pattern
+            if (searchId >= 20000)
+                searchId += 200000;
+
+            auto point = MapPoints.find(searchId);
+            if (point == MapPoints.end())
+                mapId = InvalidMapId;
+            else
+            {
+                CGBinRef bin = Lib->getBin(point->second.graphLibIndex);
+                CGGraphLibraryRef gLib = bin->getGraphLibrary();
+                CGOpenGLGraph gl = CreateOpenGL(gLib->readGraph(point->second.graphId));
+                u16 index = (u16)glMap->graphLib.size();
+                glMap->graphLib.push_back(gl);
+                mapping[mapId] = index;
+                mapId = index;
+            }
+        }
+        else
+        {
+            mapId = mapped->second;
+        }
+    };
+    // mapping all layers
+    for (CGMap::SData & var : glMap->mappedData)
+    {
+        mappingSetter(var.L0);
+        mappingSetter(var.L1);
+    }
+    return glMap;
+}
 
 #if defined(__WIN32__)
 #pragma pack(push, 1)

@@ -15,7 +15,6 @@ bool CGGraphViewerApp::OnInit()
     MainFrame = new CGGraphViewer();
     DisplayData.mode = DISPLAY_NONE;
 
-#if _CG_USE_OPENGL
     GLContext = new wxGLContext(MainFrame->Display);
     GLContext->SetCurrent(*(MainFrame->Display));
 
@@ -23,7 +22,6 @@ bool CGGraphViewerApp::OnInit()
         return false;
 
     GLEnv = new cg::CGOpenGLGraphicEnvironment();
-#endif
 
     SetTopWindow(MainFrame);
     MainFrame->Show();
@@ -63,6 +61,18 @@ void CGGraphViewerApp::ActiveBin(long binId, long listType)
             MainFrame->DisplayList->Reset(0);
             break;
         }
+    }
+}
+
+void CGGraphViewerApp::ActiveMap(int mapId)
+{
+    cg::CGOpenGLMapRef map = Synthetic->createMap(mapId);
+    if (map.isOK())
+    {
+        DisplayData.mode = DISPLAY_MAP;
+        MainFrame->DisplayList->Reset(0);
+        MainFrame->Property->Reset(0);
+        MainFrame->Display->Reset(map);
     }
 }
 
@@ -136,11 +146,7 @@ void CGGraphViewerApp::DisplayAnime(long item, long dir, long motion, bool prop)
         display->Reset(desc.v1.frames, desc.v1.duration);
         for (size_t f=0; f<desc.v1.frames; ++f)
         {
-#ifdef _CG_USE_OPENGL
             display->SetFrame(f, Synthetic->CreateOpenGL(it, f));
-#else
-            display->SetFrame(f, Synthetic->CreateBitmap(it, f));
-#endif
         }
     }
     else
@@ -169,11 +175,7 @@ void CGGraphViewerApp::DisplayGraph(long item, bool prop)
             return;
     }
 
-#ifdef _CG_USE_OPENGL
     MainFrame->Display->Reset(Synthetic->CreateOpenGL(item));
-#else
-    MainFrame->Display->Reset(Synthetic->CreateBitmap(item));
-#endif
 
     if (prop)
     {

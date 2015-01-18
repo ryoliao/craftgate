@@ -55,9 +55,6 @@
     <ClCompile Include="CGDecoder.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="CGDisplayPane.cpp">
-      <Filter>wx</Filter>
-    </ClCompile>
     <ClCompile Include="CGManagerWindow.cpp">
       <Filter>wx</Filter>
     </ClCompile>
@@ -72,6 +69,9 @@
     </ClCompile>
     <ClCompile Include="CGOpenGLGraphicEnvironment.cpp">
       <Filter>core\OpenGL-ES-2.x</Filter>
+    </ClCompile>
+    <ClCompile Include="CGMap.cpp">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,9 +127,6 @@
     <ClInclude Include="CGDecoder.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="CGDisplayPane.h">
-      <Filter>wx</Filter>
-    </ClInclude>
     <ClInclude Include="CGManagerWindow.h">
       <Filter>wx</Filter>
     </ClInclude>
@@ -156,6 +153,15 @@
     </ClInclude>
     <ClInclude Include="CGOpenGL2D.shader.h">
       <Filter>core\OpenGL-ES-2.x\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CGMap.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGSynthetic_CGOpenGLMap.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGCommon2D_Math.hpp">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

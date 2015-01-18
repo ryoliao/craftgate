@@ -26,7 +26,7 @@ namespace cg
 {
 
 _wxCT(MSGCaption,     "Message");
-_wxCT(AppTitle,       "Craft Gate");
+_wxCT(AppTitle,       "CraftGate by RYO");
 _wxCT(MenuFile,       "File");
 _wxCT(MenuItemExit,   "Exit\tAlt+F4");
 _wxCT(MenuHelp,       "Help");
@@ -38,8 +38,8 @@ _wxCT(DisplayCaption, "Display");
 _wxCT(PropertyCaption,"Properties");
 _wxCT(ListCaption,    "List");
 
-_wxCT(VersionName,    "0.0.3 alpha");
-_wxCT(Copyright,      "(C) 2013 ryo liao <ryodci@gmail.com>");
+_wxCT(VersionName,    "0.0.5");
+_wxCT(Copyright,      "(C) 2013 Liao Yen Peng <ryodci@gmail.com>");
 
 };
 

@@ -1,12 +1,12 @@
 
 #include "CGGraph_PCH.h"
-
-#if _CG_USE_OPENGL
+#include "CGCommon2D_Math.hpp"
+#include "CGSynthetic_CGOpenGLMap.hpp"
 
 BEGIN_EVENT_TABLE(CGOpenGLDisplayPane, wxGLCanvas)
     EVT_PAINT(CGOpenGLDisplayPane::OnPaint)
     EVT_TIMER(wxCGID_TIMER_ANIME, CGOpenGLDisplayPane::OnTimerUpdate)
-    EVT_LEFT_DOWN(CGOpenGLDisplayPane::OnLeftDown)
+    EVT_MOUSE_EVENTS(CGOpenGLDisplayPane::OnMouseEvent)
 END_EVENT_TABLE()
 
 static int _CG_OpenGL_DisplayPane_Attribs[] =
@@ -16,10 +16,12 @@ static int _CG_OpenGL_DisplayPane_Attribs[] =
     0
 };
 
+static cg::CGPointf DefaultGraphPosition(0.5f, 0.65f);
+
 CGOpenGLDisplayPane::CGOpenGLDisplayPane(wxWindow* parent/*=0*/, wxWindowID id/*=wxID_ANY*/)
 : wxGLCanvas(parent, id, _CG_OpenGL_DisplayPane_Attribs)
-, relX(0.5f)
-, relY(0.65f)
+, Position(DefaultGraphPosition)
+, mode(DISPLAY_GRAPH)
 {
     AnimeteTimer = new wxTimer(this, wxCGID_TIMER_ANIME);
 }
@@ -32,6 +34,7 @@ CGOpenGLDisplayPane::~CGOpenGLDisplayPane()
 
 void CGOpenGLDisplayPane::Reset(int frames, int duration)
 {
+    mode = DISPLAY_GRAPH;
     showframe = 0;
     graphs.assign(frames, cg::CGOpenGLGraph());
     AnimeteTimer->Start(duration/frames);
@@ -40,9 +43,25 @@ void CGOpenGLDisplayPane::Reset(int frames, int duration)
 
 void CGOpenGLDisplayPane::Reset(cg::CGOpenGLGraph graph)
 {
+    mode = DISPLAY_GRAPH;
     showframe = 0;
     graphs.assign(1, graph);
     AnimeteTimer->Stop();
+    Refresh(false);
+}
+
+void CGOpenGLDisplayPane::Reset(cg::CGOpenGLMapRef map)
+{
+    mode = DISPLAY_MAP;
+    showframe = 0;
+    graphs.clear();
+    AnimeteTimer->Stop();
+
+    Map = map;
+
+    if (Map.isOK())
+        MapPosition = Map->GetCenter();
+
     Refresh(false);
 }
 
@@ -56,22 +75,37 @@ void CGOpenGLDisplayPane::SetFrame(int i, cg::CGOpenGLGraph graph)
 
 void CGOpenGLDisplayPane::OnPaint(wxPaintEvent& event)
 {
-    wxSize szPanel = GetSize();
-    cg::CGPointi pos = cg::CGPointi(szPanel.x*relX, szPanel.y*relY);
-
+    using namespace cg;
+    wxSize paneSize = GetSize();
     wxGetApp().GLContext->SetCurrent(*this);
-    cg::CGOpenGLGraphicEnvironment* Env = wxGetApp().GLEnv;
+    CGOpenGLGraphicEnvironment* Env = wxGetApp().GLEnv;
+    Env->setViewport(CGRecti(0, paneSize.x, 0, paneSize.y));
 
-    Env->setViewport(cg::CGRecti(0, szPanel.x, 0, szPanel.y));
-    Env->GradientFillLinear(cg::CGColor(0x20, 0x20, 0x20), cg::CGColor(0xf0, 0xf0, 0xf0), cg::CG_BOTTOM);
-
-    if ((size_t)showframe < graphs.size() &&
-        graphs[showframe].tex.isOK())
+    if (mode == DISPLAY_GRAPH)
     {
-        cg::CGOpenGLGraph & graph = graphs[showframe];
-        Env->drawImage(graph.tex.get(), pos+graph.offset, graph.direction);
+        Env->GradientFillLinear(CGColor(0x20, 0x20, 0x20), CGColor(0xf0, 0xf0, 0xf0), CG_BOTTOM);
+        if ((size_t)showframe < graphs.size() &&
+            graphs[showframe].tex.isOK())
+        {
+            CGOpenGLGraph & graph = graphs[showframe];
+            CGPointi pos = CGPointi(paneSize.x * Position.X, paneSize.y * Position.Y);
+            Env->drawImage(graph.tex.get(), pos + graph.offset, graph.direction);
+        }
     }
-
+    else if (mode == DISPLAY_MAP)
+    {
+        Env->FillColor(CGColor(0, 0, 0));
+        if (Map.isOK())
+        {
+            CGPointi index = Map->GetIndex(MapPosition);
+            auto drawer = [=](CGOpenGLTexture & tex, CGPointi pt)
+            {
+                auto pos = pt - MapPosition;
+                Env->drawImage(tex, pos);
+            };
+            Map->EnumerateObjects(CGRecti(MapPosition, CGSizei(paneSize.x, paneSize.y)), drawer);
+        }
+    }
     SwapBuffers();
     event.Skip();
 }
@@ -82,15 +116,47 @@ void CGOpenGLDisplayPane::OnTimerUpdate(wxTimerEvent& event)
     Refresh(false);
 }
 
-void CGOpenGLDisplayPane::OnLeftDown(wxMouseEvent& event)
+void CGOpenGLDisplayPane::OnMouseEvent(wxMouseEvent& event)
 {
-    wxSize winSize = GetSize();
     wxPoint pos = event.GetPosition();
 
-    relX = (float)pos.x / winSize.x;
-    relY = (float)pos.y / winSize.y;
+    if (mode == DISPLAY_GRAPH)
+    {
+        if (event.LeftDown())
+        {
+            wxSize winSize = GetSize();
+            Position.X = (float)pos.x / winSize.x;
+            Position.Y = (float)pos.y / winSize.y;
+            Refresh(false);
+        }
+        if (event.RightDown())
+        {
+            if (wxGetApp().DisplayData.mode == CGGraphViewerApp::DISPLAY_ANIME)
+            {
+                wxSize winSize = GetSize();
+                cg::CGPointf point, dir;
 
-    Refresh(false);
+                point.X = (float)pos.x / winSize.x;
+                point.Y = (float)pos.y / winSize.y;
+
+                long dir_case = cg::CGAngleToMotionDirection(point - Position);
+                wxGetApp().AnimeProvider->UpdateDirection(dir_case);
+            }
+        }
+    }
+    else if (mode == DISPLAY_MAP)
+    {
+        if (event.LeftDown())
+        {
+            lastMouse.X = event.GetX();
+            lastMouse.Y = event.GetY();
+        }
+        if (event.Dragging())
+        {
+            cg::CGPointi cur(event.GetX(), event.GetY());
+            MapPosition = MapPosition - (cur - lastMouse);
+            lastMouse = cur;
+            Refresh(false);
+        }
+    }
 }
-
-#endif
