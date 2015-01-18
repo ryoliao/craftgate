@@ -73,6 +73,9 @@
     <ClCompile Include="CGMap.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="CGCut.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CGGraph.h">
@@ -161,6 +164,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="CGCommon2D_Math.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGCut.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

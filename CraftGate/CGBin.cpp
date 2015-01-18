@@ -226,6 +226,11 @@ void CGBinLibrary::doParseFolder(wchar_t const * folder)
                 {
                     doInsertMap(filename, id);
                 }
+                else
+                if (parseCUT(&sp, &id))
+                {
+                    doInsertCut(filename, id);
+                }
             }
         }
     } while (finder.forward());
@@ -275,6 +280,11 @@ void CGBinLibrary::doInsertCgp(wchar_t const * filename, wchar_t const * name)
 void CGBinLibrary::doInsertMap( wchar_t const * filename, u32 id )
 {
     Maps[id] = CGMapInfo{ filename };
+}
+
+void CGBinLibrary::doInsertCut(wchar_t const * filename, u32 id)
+{
+    Cuts[id] = CGCutInfo{ filename };
 }
 
 u32 CGBinLibrary::size() const
@@ -327,6 +337,18 @@ CGMapRef CGBinLibrary::readMap(u32 mapId) const
     map->reset(it->second.file.c_str());
 
     return map;
+}
+CGCutRef CGBinLibrary::readCut(u32 mapId) const
+{
+    auto it = Cuts.find(mapId);
+    if (it == Cuts.end())
+        return CGCutRef();
+
+    CGCutRef cut;
+    cut.create();
+    cut->reset(it->second.file.c_str());
+
+    return cut;
 }
 
 std::map<u32, CGMapInfo> const & CGBinLibrary::getMaps() const
@@ -422,6 +444,20 @@ bool parseMAP(wchar_t const * filename, SSplitPath const * sp, u32* id/*=0*/)
         return false;
 
     if (!CGMap::isMap(filename))
+        return false;
+
+    if (id)
+        *id = (u32)_wtoi(sp->name);
+
+    return true;
+}
+
+bool parseCUT(SSplitPath const * sp, u32 * id)
+{
+    if (_wcsicmp(sp->ext, L".cut"))
+        return false;
+
+    if (!isdigit(*sp->name))
         return false;
 
     if (id)

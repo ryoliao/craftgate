@@ -27,6 +27,7 @@ extern bool parseBin(wchar_t const * filename, s32* category = 0, s32* version =
 extern bool parseBin(SSplitPath const * sp, s32* category = 0, s32* version = 0, wchar_t* suffix = 0, wchar_t* dir = 0);
 extern bool parseCGP(SSplitPath const * sp, wchar_t* name = 0);
 extern bool parseMAP(wchar_t const * filename, SSplitPath const * sp, u32* id = 0);
+extern bool parseCUT(SSplitPath const * sp, u32* id = 0);
 
 class CGGraphLibrary;
 class CGAnimeLibrary;
@@ -74,6 +75,11 @@ struct CGMapInfo
     std::wstring file;
 };
 
+struct CGCutInfo
+{
+    std::wstring file;
+};
+
 class CGBinLibrary
 {
 public:
@@ -96,12 +102,15 @@ public:
     CGMapRef readMap(u32 mapId) const;
     std::map<u32, CGMapInfo> const & getMaps() const;
 
+    CGCutRef readCut(u32 mapId) const;
+
 private:
 
     void doParseFolder(wchar_t const * folder);
     void doInsertBin(wchar_t const * filename);
     void doInsertCgp(wchar_t const * filename, wchar_t const * name);
     void doInsertMap(wchar_t const * filename, u32 id);
+    void doInsertCut(wchar_t const * filename, u32 id);
 
     struct IDRef
     {
@@ -112,6 +121,7 @@ private:
     std::vector<CGBinRef> Bins;
     std::vector<CGNamedPalette> Palettes;
     std::map<u32, CGMapInfo> Maps;
+    std::map<u32, CGCutInfo> Cuts;
     std::wstring Folder;
 };
 

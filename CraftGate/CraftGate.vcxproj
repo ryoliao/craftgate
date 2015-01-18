@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="CGAnime.cpp" />
     <ClCompile Include="CGCommon.cpp" />
+    <ClCompile Include="CGCut.cpp" />
     <ClCompile Include="CGDecoder.cpp" />
     <ClCompile Include="CGEventList.cpp" />
     <ClCompile Include="CGFile.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="CGCommon.h" />
     <ClInclude Include="CGCommon2D_Math.hpp" />
     <ClInclude Include="CGConfig.h" />
+    <ClInclude Include="CGCut.h" />
     <ClInclude Include="CGDecoder.h" />
     <ClInclude Include="CGMap.h" />
     <ClInclude Include="CGOpenGLDisplayPane.h" />

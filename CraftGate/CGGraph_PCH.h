@@ -63,6 +63,7 @@
 #include "CGGraph.h"
 #include "CGAnime.h"
 #include "CGMap.h"
+#include "CGCut.h"
 #include "CGDecoder.h"
 #include "CGOpenGLTexture.h"
 #include "CGOpenGLGraphicEnvironment.h"
