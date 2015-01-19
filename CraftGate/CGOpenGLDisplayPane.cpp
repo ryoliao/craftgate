@@ -60,7 +60,10 @@ void CGOpenGLDisplayPane::Reset(cg::CGOpenGLMapRef map)
     Map = map;
 
     if (Map.isOK())
-        MapPosition = Map->GetCenter();
+    {
+        wxSize paneSize = GetSize();
+        MapPosition = Map->GetCenter() - cg::CGPointi(paneSize.x / 2, paneSize.y / 2);
+    }
 
     Refresh(false);
 }
