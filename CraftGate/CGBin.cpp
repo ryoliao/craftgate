@@ -227,7 +227,7 @@ void CGBinLibrary::doParseFolder(wchar_t const * folder)
                     doInsertMap(filename, id);
                 }
                 else
-                if (parseCUT(&sp, &id))
+                if (parseCUT(filename, &sp, &id))
                 {
                     doInsertCut(filename, id);
                 }
@@ -427,8 +427,7 @@ bool parseCGP(SSplitPath const * sp, wchar_t* name/*=0*/)
     if (_wcsicmp(sp->ext, L".cgp"))
         return false;
 
-    if (name)
-        wcscpy(name, sp->name);
+    if (name) wcscpy(name, sp->name);
 
     return true;
 }
@@ -446,13 +445,12 @@ bool parseMAP(wchar_t const * filename, SSplitPath const * sp, u32* id/*=0*/)
     if (!CGMap::isMap(filename))
         return false;
 
-    if (id)
-        *id = (u32)_wtoi(sp->name);
+    if (id) *id = (u32)_wtoi(sp->name);
 
     return true;
 }
 
-bool parseCUT(SSplitPath const * sp, u32 * id)
+bool parseCUT(wchar_t const * filename, SSplitPath const * sp, u32 * id)
 {
     if (_wcsicmp(sp->ext, L".cut"))
         return false;
@@ -460,8 +458,10 @@ bool parseCUT(SSplitPath const * sp, u32 * id)
     if (!isdigit(*sp->name))
         return false;
 
-    if (id)
-        *id = (u32)_wtoi(sp->name);
+    if (!CGCut::isCut(filename))
+        return false;
+
+    if (id) *id = (u32)_wtoi(sp->name);
 
     return true;
 }

@@ -57,12 +57,21 @@ std::vector<CGCut::SData> const & CGCut::getData() const
     return data;
 }
 
-void CGCut::doReadCut(IStream* s)
+static bool CGCutValidate(IStream * s, SCutHeader * out)
 {
     SCutHeader header;
     s->read(&header);
-
     if (_stricmp(header.headerId, "CUT""\x20""\x0c"))
+        return false;
+    if (out) *out = header;
+    return true;
+}
+
+void CGCut::doReadCut(IStream* s)
+{
+    SCutHeader header;
+    
+    if (!CGCutValidate(s, &header))
     {
         reset();
         return;
@@ -74,6 +83,17 @@ void CGCut::doReadCut(IStream* s)
     u32 nRead = s->read(data.data(), nData);
     if (nRead < nData)
         data.reserve(nRead);
+}
+
+bool CGCut::isCut(wchar_t const * cut_file_hint)
+{
+    SCutHeader header;
+    CGFile f(cut_file_hint);
+
+    if (!f.isOK())
+        return false;
+
+    return CGCutValidate(&f, 0);
 }
 
 }

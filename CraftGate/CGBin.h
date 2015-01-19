@@ -27,7 +27,7 @@ extern bool parseBin(wchar_t const * filename, s32* category = 0, s32* version =
 extern bool parseBin(SSplitPath const * sp, s32* category = 0, s32* version = 0, wchar_t* suffix = 0, wchar_t* dir = 0);
 extern bool parseCGP(SSplitPath const * sp, wchar_t* name = 0);
 extern bool parseMAP(wchar_t const * filename, SSplitPath const * sp, u32* id = 0);
-extern bool parseCUT(SSplitPath const * sp, u32* id = 0);
+extern bool parseCUT(wchar_t const * filename, SSplitPath const * sp, u32* id = 0);
 
 class CGGraphLibrary;
 class CGAnimeLibrary;

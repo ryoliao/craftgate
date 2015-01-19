@@ -36,6 +36,8 @@ public:
     u32 getSize() const;
     std::vector<SData> const & getData() const;
 
+    static bool isCut(wchar_t const * cut_file_hint);
+
 private:
     void doReadCut(IStream* s);
 
