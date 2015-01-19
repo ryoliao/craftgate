@@ -80,6 +80,7 @@ public:
     void OnExport(wxCommandEvent & e);
     void OnAbout(wxCommandEvent & e);
     void OnExit(wxCommandEvent & e);
+    void OnSearch(wxCommandEvent & e);
 
     // setup
     void setupAui();

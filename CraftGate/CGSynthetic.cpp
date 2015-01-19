@@ -56,8 +56,7 @@ CGSizei CGOpenGLMap::Last() const
 
 CGPointi CGOpenGLMap::GetCenter() const
 {
-    CGSizei last = Last();
-    return CGPointi(last.X * MapGridWidth, 0);
+    return GetPosition(size.X / 2, size.Y / 2);
 }
 
 class CGPixelData
@@ -159,6 +158,14 @@ MotionIterator CGSynthetic::findMotion(u32 animeId, u16 dir, u16 motion)
     return it;
 }
 
+MapPoint const * CGSynthetic::findMapPoint(u32 refId)
+{
+    auto it = MapPoints.find(refId);
+    if (it == MapPoints.end())
+        return nullptr;
+    return &it->second;
+}
+
 CGPaletteRef CGSynthetic::doGetPalette(CGMotion const * mo)
 {
     CGPaletteRef pal;
@@ -236,6 +243,7 @@ void CGSynthetic::doParse()
                     case ECRID_GRAPH:
                     case ECRID_GRAPH_EX:
                     case ECRID_GRAPH_SE:
+                    default:
                     {
                         MapPoints[gdesc->refId] = MapPoint{ iBin, iGraph };
                     }
@@ -302,6 +310,30 @@ CGOpenGLGraph CGSynthetic::CreateOpenGL(CGGraphRef graph, s32 direction)
     return oglGraph;
 }
 
+CGOpenGLGraph CGSynthetic::CreateOpenGLWithCut(CGCutRef cut, u32 cutId)
+{
+    if (cut.isOK())
+    {
+        auto data = cut->getData();
+        if (cutId < data.size())
+        {
+            auto desc = data.at(cutId);
+            CGGraphRef graph = createGraphFromRef(desc.refId);
+            if (graph.isOK())
+            {
+                CGOpenGLGraph oglGraph;
+                oglGraph.offset = CGPointi(desc.offset_x, desc.offset_y);
+                oglGraph.direction = CG_LEFT | CG_TOP;
+                oglGraph.tex.create();
+                if (!oglGraph.tex->reset(graph, desc.from_x, desc.from_y, desc.width, desc.height))
+                    oglGraph.tex.reset();
+                return oglGraph;
+            }
+        }
+    }
+    return CGOpenGLGraph();
+}
+
 CGOpenGLMapRef CGSynthetic::createMap(u32 id)
 {
     CGMapRef map = Lib->readMap(id);
@@ -310,6 +342,11 @@ CGOpenGLMapRef CGSynthetic::createMap(u32 id)
         return CGOpenGLMapRef();
     
     CGOpenGLMapRef glMap;
+
+    glMap = createMapFromCut(map);
+    if (glMap.isOK())
+        return glMap;
+
     std::map<u16, u16> mapping;
     glMap.create();
 
@@ -335,14 +372,13 @@ CGOpenGLMapRef CGSynthetic::createMap(u32 id)
             if (searchId >= 20000)
                 searchId += 200000;
 
-            auto point = MapPoints.find(searchId);
-            if (point == MapPoints.end())
+            CGGraphRef graph = createGraphFromRef(searchId);
+
+            if (!graph.isOK())
                 mapId = InvalidMapId;
             else
             {
-                CGBinRef bin = Lib->getBin(point->second.graphLibIndex);
-                CGGraphLibraryRef gLib = bin->getGraphLibrary();
-                CGOpenGLGraph gl = CreateOpenGL(gLib->readGraph(point->second.graphId));
+                CGOpenGLGraph gl = CreateOpenGL(graph);
                 u16 index = (u16)glMap->graphLib.size();
                 glMap->graphLib.push_back(gl);
                 mapping[mapId] = index;
@@ -360,7 +396,99 @@ CGOpenGLMapRef CGSynthetic::createMap(u32 id)
         mappingSetter(var.L0);
         mappingSetter(var.L1);
     }
+
+    // clean cached by createGraphFromRef()
+    clearMapCache();
+
     return glMap;
+}
+
+CGOpenGLMapRef CGSynthetic::createMapFromCut(CGMapRef map)
+{
+    if (!map.isOK())
+        return CGOpenGLMapRef();
+
+    CGCutRef cut;
+    cut = Lib->readCut(map->getId());
+
+    if (!cut.isOK())
+        return CGOpenGLMapRef();
+
+    CGOpenGLMapRef glMap;
+    std::map<u16, u16> mapping;
+
+    glMap.create();
+
+    // I'm lazy, so use c++11 as simple.
+    glMap->mappedData = std::move(map->getData());
+    glMap->size = map->getSize();
+    // mapping lambda
+    auto mappingSetter = [&](u16 & mapId)
+    {
+        // skip empty data
+        if (0 == mapId)
+        {
+            mapId = InvalidMapId;
+            return;
+        }
+
+        auto mapped = mapping.find(mapId);
+        if (mapped == mapping.end())
+        {
+            u32 searchId = mapId;
+            CGOpenGLGraph graph = CreateOpenGLWithCut(cut, searchId);
+
+            if (!graph.tex.isOK())
+                mapId = InvalidMapId;
+            else
+            {
+                u16 index = (u16)glMap->graphLib.size();
+                glMap->graphLib.push_back(graph);
+                mapping[mapId] = index;
+                mapId = index;
+            }
+        }
+        else
+        {
+            mapId = mapped->second;
+        }
+    };
+    // mapping all layers
+    for (CGMap::SData & var : glMap->mappedData)
+    {
+        mappingSetter(var.L0);
+        mappingSetter(var.L1);
+    }
+
+    // clean cached by CreateOpenGLWithCut()
+    clearMapCache();
+
+    return glMap;
+}
+
+CGGraphRef CGSynthetic::createGraphFromRef(u32 refId)
+{
+    auto point = MapPoints.find(refId);
+    if (point == MapPoints.end())
+        return CGGraphRef();
+
+    if (point->second.graphCache.isOK())
+        return point->second.graphCache;
+
+    CGBinRef bin = Lib->getBin(point->second.graphLibIndex);
+    CGGraphLibraryRef gLib = bin->getGraphLibrary();
+    point->second.graphCache = gLib->readGraph(point->second.graphId);
+    return point->second.graphCache;
+}
+
+void CGSynthetic::clearMapCache()
+{
+    auto point = MapPoints.begin();
+    while (point != MapPoints.end())
+    {
+        point->second.graphCache.reset();
+        ++point;
+    }
 }
 
 #if defined(__WIN32__)

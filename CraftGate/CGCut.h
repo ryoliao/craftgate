@@ -8,6 +8,9 @@ namespace cg
 class CGCut
 {
 public:
+#if defined(__WIN32__)
+#pragma pack(push, 1)
+#endif
     struct SData
     {
         u32 refId;
@@ -16,9 +19,12 @@ public:
         u16 from_y;
         u16 width;
         u16 height;
-        u16 offset_x;
-        u16 offset_y;
+        s16 offset_x;
+        s16 offset_y;
     };
+#if defined(__WIN32__)
+#pragma pack(pop)
+#endif
 
     CGCut();
     CGCut(wchar_t const * hint_cut_file);

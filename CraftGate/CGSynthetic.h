@@ -62,6 +62,7 @@ struct MapPoint
 {
     u32 graphLibIndex;
     u32 graphId;
+    CGGraphRef graphCache;
 };
 
 class CGSynthetic
@@ -80,14 +81,19 @@ public:
     void selectBin(u32 binId);
     void selectPalette(u32 palId);
     CGOpenGLMapRef createMap(u32 mapId);
+    CGOpenGLMapRef createMapFromCut(CGMapRef map);
+    CGGraphRef createGraphFromRef(u32 refId);
+    void clearMapCache();
 
     MotionIterator findMotion(u32 animeId, u16 dir, u16 motion);
+    MapPoint const * findMapPoint(u32 refId);
 
     void saveGIF(MotionIterator iter, c8 const * filename);
 
     CGOpenGLGraph CreateOpenGL(u32 graphId);
     CGOpenGLGraph CreateOpenGL(MotionIterator iterator, u32 frame);
     CGOpenGLGraph CreateOpenGL(CGGraphRef graph, s32 direction=CG_LEFT|CG_TOP);
+    CGOpenGLGraph CreateOpenGLWithCut(CGCutRef cut, u32 cutId);
 
 private:
 

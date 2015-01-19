@@ -207,6 +207,7 @@ BEGIN_EVENT_TABLE(CGGraphViewer, wxFrame)
     EVT_COMMAND (wxID_SAVE,  wxEVT_COMMAND_MENU_SELECTED, CGGraphViewer::OnExport)
     EVT_COMMAND (wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED, CGGraphViewer::OnAbout)
     EVT_COMMAND (wxID_EXIT,  wxEVT_COMMAND_MENU_SELECTED, CGGraphViewer::OnExit)
+    EVT_COMMAND (wxCGID_SEARCH, wxEVT_COMMAND_MENU_SELECTED, CGGraphViewer::OnSearch)
 END_EVENT_TABLE()
 
 CGGraphViewer::CGGraphViewer()
@@ -282,12 +283,17 @@ void CGGraphViewer::CreateMenuBar()
     fileMenu->AppendSeparator();
     fileMenu->Append(wxID_EXIT, cg::MenuItemExit);
 
+    // edit menu
+    wxMenu* editMenu = new wxMenu;
+    editMenu->Append(wxCGID_SEARCH, cg::MenuItemSearch);
+
     // help menu
     wxMenu* helpMenu = new wxMenu;
     helpMenu->Append(wxID_ABOUT, cg::MenuItemAbout);
 
     // concatenate all menus
     mb->Append(fileMenu, cg::MenuFile);
+    mb->Append(editMenu, cg::MenuEdit);
     mb->Append(helpMenu, cg::MenuHelp);
 
     SetMenuBar(mb);
@@ -347,4 +353,27 @@ void CGGraphViewer::OnAbout( wxCommandEvent & e )
 void CGGraphViewer::OnExit( wxCommandEvent & e )
 {
     Close();
+}
+
+void CGGraphViewer::OnSearch(wxCommandEvent & e)
+{
+    wxString value;
+    wxTextEntryDialog dlg(this, wxT("請輸入要查找的地圖編號"), wxT("搜尋"), wxT(""));
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        value = dlg.GetValue();
+
+        unsigned long id;
+        if (value.ToULong(&id))
+        {
+            auto & app = wxGetApp();
+            auto point = app.Synthetic->findMapPoint((cg::u32)id);
+            if (point != nullptr)
+            {
+                app.ActiveBin(point->graphLibIndex, CGGraphViewerApp::DISPLAY_GRAPH);
+                app.MainFrame->DisplayList->EnsureVisible(point->graphId);
+                app.MainFrame->DisplayList->SetItemState(point->graphId, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+            }
+        }
+    }
 }

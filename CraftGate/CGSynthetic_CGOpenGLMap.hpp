@@ -8,9 +8,10 @@ namespace cg
     void CGOpenGLMap::EnumerateObjects(CGRecti rect, Fn & f)
     {
         // add border
-        rect.LeftTop.Y -= MapGridHeight;
-        rect.RightBottom.X += MapGridWidth;
-        rect.RightBottom.Y += MapGridHeight;
+        rect.LeftTop.X -= MapGridWidth * 4;
+        rect.LeftTop.Y -= MapGridHeight * 4;
+        rect.RightBottom.X += MapGridWidth * 4;
+        rect.RightBottom.Y += MapGridHeight * 4;
 
         CGPointi lt = GetIndex(rect.LeftTop);
         CGPointi rt = GetIndex(rect.getRightTop());

@@ -20,6 +20,7 @@ enum
     wxCGID_MANAGER_ITEM_ACTIVE,
     wxCGID_ERRLIST,
     wxCGID_TIMER_ANIME,
+    wxCGID_SEARCH,
 };
 
 namespace cg
@@ -28,11 +29,13 @@ namespace cg
 _wxCT(MSGCaption,     "Message");
 _wxCT(AppTitle,       "CraftGate by RYO");
 _wxCT(MenuFile,       "File");
+_wxCT(MenuEdit,       "Edit");
 _wxCT(MenuItemExit,   "Exit\tAlt+F4");
 _wxCT(MenuHelp,       "Help");
 _wxCT(MenuItemAbout,  "About");
 _wxCT(MenuItemOpen,   "Open...\tCtrl+O");
 _wxCT(MenuItemExport, "Export...\tCtrl+E");
+_wxCT(MenuItemSearch, "Search...\tCtrl+S");
 _wxCT(ManagerCaption, "Manager");
 _wxCT(DisplayCaption, "Display");
 _wxCT(PropertyCaption,"Properties");
