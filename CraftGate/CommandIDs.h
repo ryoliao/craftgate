@@ -41,7 +41,7 @@ _wxCT(DisplayCaption, "Display");
 _wxCT(PropertyCaption,"Properties");
 _wxCT(ListCaption,    "List");
 
-_wxCT(VersionName,    "0.0.5");
+_wxCT(VersionName,    "0.0.5b");
 _wxCT(Copyright,      "(C) 2013 Liao Yen Peng <ryodci@gmail.com>");
 
 };

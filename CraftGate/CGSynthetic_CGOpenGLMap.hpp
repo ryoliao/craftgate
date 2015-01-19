@@ -10,11 +10,11 @@ const u16 CGMap_InvalidData = 0xffff;
 template<typename Fn>
 void CGOpenGLMap::EnumerateObjects(CGRecti rect, Fn & f)
 {
-    // add border
-    rect.LeftTop.X -= MapGridWidth * 4;
-    rect.LeftTop.Y -= MapGridHeight * 4;
-    rect.RightBottom.X += MapGridWidth * 4;
-    rect.RightBottom.Y += MapGridHeight * 4;
+    // add border, magic number by experience
+    rect.LeftTop.X -= MapGridWidth * 10;
+    rect.LeftTop.Y -= MapGridHeight * 10;
+    rect.RightBottom.X += MapGridWidth * 10;
+    rect.RightBottom.Y += MapGridHeight * 10;
 
     CGPointi lt = GetIndex(rect.LeftTop);
     CGPointi rt = GetIndex(rect.getRightTop());
