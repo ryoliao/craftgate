@@ -1,94 +1,11 @@
 
 #include "CGGraph_PCH.h"
+#include "CGSynthetic_CGOpenGLMap.hpp"
+
 #include <gif_lib.h>
 
 namespace cg
 {
-
-const u16 InvalidMapId = 0xffff;
-
-CGPointi CGOpenGLMap::GetPosition(s32 x, s32 y) const
-{
-    return CGPointi((x + y) * MapGridWidth, (y - x) * MapGridHeight);
-}
-
-CGPointi CGOpenGLMap::GetIndex(s32 x, s32 y)
-{
-    x /= MapGridWidth;
-    y /= MapGridHeight;
-    return CGPointi((x - y) / 2, (x + y) / 2);
-}
-
-CGPointi CGOpenGLMap::GetIndex(CGPointi pos)
-{
-    return GetIndex(pos.X, pos.Y);
-}
-
-CGOpenGLGraph CGOpenGLMap::GetGraph(s32 x, s32 y, u32 layer) const
-{
-    if (x < 0 || x >= (s32)size.X ||
-        y < 0 || y >= (s32)size.Y)
-        return CGOpenGLGraph();
-
-    u16 i;
-    switch (layer)
-    {
-    case 0:
-        i = mappedData[x + y * size.X].L0;
-        break;
-    case 1:
-        i = mappedData[x + y * size.X].L1;
-        break;
-    default:
-        return CGOpenGLGraph();
-    }
-
-    if (i == InvalidMapId)
-        return CGOpenGLGraph();
-
-    return graphLib[i];
-}
-
-CGSizei CGOpenGLMap::Last() const
-{
-    return CGSizei(size.X - 1, size.Y - 1);
-}
-
-CGPointi CGOpenGLMap::GetCenter() const
-{
-    return GetPosition(size.X / 2, size.Y / 2);
-}
-
-class CGPixelData
-{
-public:
-    CGPixelData(CGGraphRef graph, CGPaletteRef pal)
-        : ptr(graph->buffer.data())
-        , pitch(graph->desc.width)
-        , palette(pal)
-    {}
-
-    inline void ConvertRowPixels(long row, GifFileType* gif)
-    {
-        u8* sp = ptr + (row*pitch);
-        ::EGifPutLine(gif, sp, pitch);
-    }
-
-    inline void InvertRowPixels(long row, GifFileType* gif)
-    {
-        u8* sp = ptr + ((row+1)*pitch);
-        for (u32 i=0; i<pitch; ++i)
-        {
-            --sp;
-            ::EGifPutPixel(gif, *sp);
-        }
-    }
-
-private:
-    u8* ptr;
-    u32 pitch;
-    CGPaletteRef palette;
-};
 
 CGSynthetic::CGSynthetic()
     : PaletteId(-1L)
@@ -314,6 +231,13 @@ CGOpenGLGraph CGSynthetic::CreateOpenGLWithCut(CGCutRef cut, u32 cutId)
 {
     if (cut.isOK())
     {
+        // special case, thanks for HyperDream
+#ifdef _DEBUG
+        if (cutId < 1000)
+            ::DebugBreak();
+#endif
+        cutId -= 1000;
+
         auto data = cut->getData();
         if (cutId < data.size())
         {
@@ -322,7 +246,8 @@ CGOpenGLGraph CGSynthetic::CreateOpenGLWithCut(CGCutRef cut, u32 cutId)
             if (graph.isOK())
             {
                 CGOpenGLGraph oglGraph;
-                oglGraph.offset = CGPointi(desc.offset_x, desc.offset_y);
+                auto const & gDesc = graph->desc;
+                oglGraph.offset = CGPointi(gDesc.offX - desc.origin_x, gDesc.offY - desc.orogin_y);
                 oglGraph.direction = CG_LEFT | CG_TOP;
                 oglGraph.tex.create();
                 if (!oglGraph.tex->reset(graph, desc.from_x, desc.from_y, desc.width, desc.height))
@@ -359,7 +284,7 @@ CGOpenGLMapRef CGSynthetic::createMap(u32 id)
         // skip empty data
         if (0 == mapId)
         {
-            mapId = InvalidMapId;
+            mapId = CGMap_InvalidData;
             return;
         }
 
@@ -375,7 +300,7 @@ CGOpenGLMapRef CGSynthetic::createMap(u32 id)
             CGGraphRef graph = createGraphFromRef(searchId);
 
             if (!graph.isOK())
-                mapId = InvalidMapId;
+                mapId = CGMap_InvalidData;
             else
             {
                 CGOpenGLGraph gl = CreateOpenGL(graph);
@@ -428,7 +353,7 @@ CGOpenGLMapRef CGSynthetic::createMapFromCut(CGMapRef map)
         // skip empty data
         if (0 == mapId)
         {
-            mapId = InvalidMapId;
+            mapId = CGMap_InvalidData;
             return;
         }
 
@@ -439,7 +364,7 @@ CGOpenGLMapRef CGSynthetic::createMapFromCut(CGMapRef map)
             CGOpenGLGraph graph = CreateOpenGLWithCut(cut, searchId);
 
             if (!graph.tex.isOK())
-                mapId = InvalidMapId;
+                mapId = CGMap_InvalidData;
             else
             {
                 u16 index = (u16)glMap->graphLib.size();
@@ -545,6 +470,37 @@ static void CGSynthetic_Do_Convert_Palette(ColorMapObject* map, CGPalette const 
     }
 }
 
+class CGGifPixelData
+{
+public:
+    CGGifPixelData(CGGraphRef graph, CGPaletteRef pal)
+        : ptr(graph->buffer.data())
+        , pitch(graph->desc.width)
+        , palette(pal)
+    {}
+
+    inline void ConvertRowPixels(long row, GifFileType* gif)
+    {
+        u8* sp = ptr + (row*pitch);
+        ::EGifPutLine(gif, sp, pitch);
+    }
+
+    inline void InvertRowPixels(long row, GifFileType* gif)
+    {
+        u8* sp = ptr + ((row + 1)*pitch);
+        for (u32 i = 0; i<pitch; ++i)
+        {
+            --sp;
+            ::EGifPutPixel(gif, *sp);
+        }
+    }
+
+private:
+    u8* ptr;
+    u32 pitch;
+    CGPaletteRef palette;
+};
+
 void CGSynthetic::saveGIF(MotionIterator iter, c8 const * filename)
 {
     CGGraphLibraryRef glib;
@@ -639,7 +595,7 @@ void CGSynthetic::saveGIF(MotionIterator iter, c8 const * filename)
         bool hasPalette = graph->palette;
         defGraphInfo const & desc = graph->desc;
         CGPointi offset = screenRect.toClient(CGPointi(desc.offX, desc.offY));
-        CGPixelData data(graph, hasPalette ? graph->palette : pal);
+        CGGifPixelData data(graph, hasPalette ? graph->palette : pal);
 
         if (hasPalette)
             CGSynthetic_Do_Convert_Palette(gifPalette, graph->palette.get());

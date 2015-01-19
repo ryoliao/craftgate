@@ -19,8 +19,8 @@ public:
         u16 from_y;
         u16 width;
         u16 height;
-        s16 offset_x;
-        s16 offset_y;
+        s16 origin_x;
+        s16 orogin_y;
     };
 #if defined(__WIN32__)
 #pragma pack(pop)

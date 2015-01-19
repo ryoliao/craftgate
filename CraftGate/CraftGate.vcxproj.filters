@@ -76,6 +76,9 @@
     <ClCompile Include="CGCut.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="CGSynthetic_CGOpenGLMap.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CGGraph.h">

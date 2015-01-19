@@ -60,7 +60,7 @@ void CGOpenGLTexture::reset(CGGraphRef graph)
     }
 }
 
-bool CGOpenGLTexture::reset(CGGraphRef graph, u32 x, u32 y, u32 width, u32 height)
+bool CGOpenGLTexture::reset(CGGraphRef graph, s32 x, s32 y, u32 width, u32 height)
 {
     if (graph &&
         graph->palette)
@@ -68,7 +68,7 @@ bool CGOpenGLTexture::reset(CGGraphRef graph, u32 x, u32 y, u32 width, u32 heigh
         defGraphInfo const & desc = graph->desc;
 
         // prevent out of graph frame
-        if (x >= (u32)desc.width || y >= (u32)desc.height)
+        if (x >= desc.width || y >= desc.height)
             goto fail;
         if (x + width >= (u32)desc.width)
             width = desc.width - x;

@@ -119,6 +119,7 @@
     <ClCompile Include="CGPropertyWindow.cpp" />
     <ClCompile Include="CGScopedStream.cpp" />
     <ClCompile Include="CGSynthetic.cpp" />
+    <ClCompile Include="CGSynthetic_CGOpenGLMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CGAnime.h" />

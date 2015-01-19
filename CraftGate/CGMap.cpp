@@ -6,6 +6,10 @@ namespace cg
 
 static const CGMap::SData nullMapData{ 0u, 0u, 0u };
 
+#if defined(__WIN32__)
+#pragma pack(push, 1)
+#endif
+
 struct SClientMapHeader
 {
     c8 headerId[4];
@@ -24,6 +28,10 @@ struct SServerMapHeader
     u16 width;
     u16 height;
 };
+
+#if defined(__WIN32__)
+#pragma pack(pop)
+#endif
 
 CGMap::CGMap(wchar_t const * hint_map_file)
 {

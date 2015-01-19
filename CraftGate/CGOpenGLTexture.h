@@ -15,7 +15,7 @@ public:
     bool isOK() const;
 
     void reset(CGGraphRef graph);
-    bool reset(CGGraphRef graph, u32 x, u32 y, u32 width, u32 height);
+    bool reset(CGGraphRef graph, s32 x, s32 y, u32 width, u32 height);
     GLuint getName() const;
     CGSizei getSize() const;
 
